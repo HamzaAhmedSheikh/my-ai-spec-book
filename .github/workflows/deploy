@@ -1,0 +1,52 @@
+name: Deploy Docusaurus to GitHub Pages
+
+on:
+  # Jab bhi 'main' branch mein push hoga, tab yeh action chalu hoga
+  push:
+    branches:
+      - main
+  
+  # Manual run ke liye bhi yeh option rakha gaya hai
+  workflow_dispatch:
+
+# Permissions set karna zaroori hai deployment ke liye
+permissions:
+  contents: read
+  pages: write # GitHub Pages deployment ke liye zaroori
+  id-token: write # OIDC use karne ke liye zaroori
+
+jobs:
+  deployment:
+    # ...
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: ⚙️ Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm' 
+      
+      # ⬇️ Yahan se working-directory add karein
+      - name: 📦 Install Dependencies
+        run: npm install
+        working-directory: ./my-ai-spec-book/my-website  # <--- Project ki root directory
+
+      - name: 🏗️ Build Docusaurus Project
+        run: npm run build
+        working-directory: ./my-ai-spec-book/my-website  # <--- Project ki root directory
+      
+      # Build output 'build' folder mein aayega, jo ki is working directory ke andar hai.
+      - name: 🚀 Configure GitHub Pages (Setup)
+        uses: actions/configure-pages@v5
+
+      - name: 📤 Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Path ko adjust karein taaki woh Docusaurus build folder ko point kare
+          path: './my-ai-spec-book/my-website/build' # <--- Pura path build folder tak
+          
+      - name: 🌐 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
