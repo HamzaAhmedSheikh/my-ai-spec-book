@@ -1,10 +1,243 @@
-# Claude Code Rules
+# CLAUDE.md
 
-This file is generated during init for the selected agent.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-You are an expert AI assistant specializing in Spec-Driven Development (SDD). Your primary goal is to work with the architext to build products.
+## Project Overview
 
-## Task context
+This is an **Agent-Native Book Challenge** project following Spec-Driven Development (SDD) methodology. The goal is to create a technical book with Docusaurus (static core) and an embedded RAG agent with FastAPI (dynamic core), both delivered as a unified repository.
+
+### Key Architecture
+- **Static Core**: Docusaurus site deployed to GitHub Pages
+- **Dynamic Core**: FastAPI RAG agent with Qdrant vector DB, supporting global context and text-selection grounding ("Magna Carta" feature)
+- **Development Framework**: Spec-Kit Plus for traceability (specs → AI generation → implementation)
+
+## Development Commands
+
+### Spec-Driven Development Workflow
+
+The project follows a strict spec-first workflow using slash commands:
+
+1. **Create Feature Specification**
+   ```bash
+   /sp.specify <feature description>
+   ```
+   - Generates feature spec in `specs/<feature-number>-<short-name>/spec.md`
+   - Creates new git branch `<number>-<short-name>`
+   - Validates spec quality with automated checklist
+
+2. **Clarify Specification** (optional)
+   ```bash
+   /sp.clarify
+   ```
+   - Identifies underspecified areas in the current spec
+   - Asks up to 5 targeted clarification questions
+   - Updates spec with answers
+
+3. **Generate Implementation Plan**
+   ```bash
+   /sp.plan
+   ```
+   - Creates `plan.md` with technical architecture
+   - Generates research.md, data-model.md, contracts/, quickstart.md
+   - Validates against constitution requirements
+
+4. **Generate Task List**
+   ```bash
+   /sp.tasks
+   ```
+   - Creates dependency-ordered `tasks.md`
+   - Organizes tasks by user story for independent implementation
+   - Includes parallelization markers [P] for concurrent execution
+
+5. **Execute Implementation**
+   ```bash
+   /sp.implement
+   ```
+   - Executes all tasks from tasks.md in dependency order
+   - Checks checklists before starting
+   - Marks tasks complete as they finish
+
+6. **Commit & Create PR**
+   ```bash
+   /sp.git.commit_pr
+   ```
+   - Autonomous git workflow agent
+   - Analyzes changes and generates meaningful commit messages
+   - Creates feature branch and PR with intelligent descriptions
+
+7. **Document Architecture Decisions**
+   ```bash
+   /sp.adr <decision-title>
+   ```
+   - Creates Architecture Decision Record in `history/adr/`
+   - Documents rationale and tradeoffs
+
+8. **Generate Feature Checklist**
+   ```bash
+   /sp.checklist
+   ```
+   - Creates custom checklist for current feature
+
+9. **Analyze Cross-Artifact Consistency**
+   ```bash
+   /sp.analyze
+   ```
+   - Validates consistency across spec.md, plan.md, tasks.md
+   - Non-destructive quality analysis
+
+### Constitution Management
+
+**View/Edit Project Principles**
+```bash
+# Constitution is at:
+.specify/memory/constitution.md
+```
+
+**Update Constitution**
+```bash
+/sp.constitution
+```
+- Creates or updates constitution from interactive inputs
+- Keeps dependent templates in sync
+
+## Repository Structure
+
+```
+├── docs/                          # Docusaurus content (if implemented)
+│   ├── docs/                      # Book chapters (markdown/MDX)
+│   ├── src/                       # React components
+│   ├── static/                    # Static assets
+│   └── docusaurus.config.js
+├── api/                           # FastAPI backend (if implemented)
+│   ├── app/
+│   │   ├── main.py                # FastAPI entry point
+│   │   ├── routers/               # API routes
+│   │   ├── services/              # RAG, Qdrant integration
+│   │   └── models/                # Pydantic models
+│   ├── tests/
+│   └── requirements.txt
+├── specs/                         # Feature specifications
+│   └── <feature-number>-<name>/
+│       ├── spec.md                # Requirements (business-focused, no tech details)
+│       ├── plan.md                # Technical architecture
+│       ├── tasks.md               # Implementation tasks
+│       ├── checklists/            # Quality validation checklists
+│       ├── research.md            # Technical decisions
+│       ├── data-model.md          # Entity definitions
+│       ├── contracts/             # API contracts
+│       └── quickstart.md          # Integration scenarios
+├── history/
+│   ├── prompts/                   # Prompt History Records (PHRs)
+│   │   ├── constitution/
+│   │   ├── <feature-name>/
+│   │   └── general/
+│   └── adr/                       # Architecture Decision Records
+├── .specify/                      # Spec-Kit Plus framework
+│   ├── memory/
+│   │   └── constitution.md        # Project principles
+│   ├── templates/                 # Spec, plan, task templates
+│   └── scripts/bash/              # Automation scripts
+└── .claude/
+    └── commands/                  # Slash command definitions
+```
+
+## Helper Scripts
+
+The `.specify/scripts/bash/` directory contains automation scripts:
+
+- **`create-new-feature.sh`**: Creates feature branch and initializes spec
+- **`create-phr.sh`**: Creates Prompt History Record
+- **`create-adr.sh`**: Creates Architecture Decision Record
+- **`setup-plan.sh`**: Initializes planning artifacts
+- **`check-prerequisites.sh`**: Validates feature readiness
+- **`update-agent-context.sh`**: Updates agent context files
+- **`common.sh`**: Shared utilities
+
+These are typically called by slash commands, not directly.
+
+## Mandatory Deliverables (from Constitution)
+
+The project MUST deliver:
+
+1. **Live GitHub Pages URL**: Docusaurus site with 10+ substantive pages
+2. **Live API Endpoint**: FastAPI backend with health check and chat endpoints
+3. **Text Selection Grounding**: "Magna Carta" feature for context-aware responses
+4. **Spec-Kit Artifacts**: Complete specs, PHRs, and ADRs demonstrating AI-assisted development
+5. **Required API Endpoints**:
+   - `GET /health` - Health check
+   - `POST /chat` - Global context mode
+   - `POST /chat/grounded` - Selection grounding mode
+
+## Technology Stack (Non-Negotiable)
+
+- **Book**: Docusaurus 3.x → GitHub Pages
+- **API**: FastAPI (Python 3.9+) → Render/Railway
+- **Agent**: OpenAI Agents SDK (preferred) or ChatKit
+- **Vector DB**: Qdrant Cloud (Free Tier)
+- **Development**: Claude Code + Spec-Kit Plus
+
+See `.specify/memory/constitution.md` for complete requirements.
+
+## Key Principles
+
+You are an expert AI assistant specializing in Spec-Driven Development (SDD). Your primary goal is to work with the architect to build products.
+
+## Quick Reference
+
+### Current Branch Strategy
+- `main`/`master`: Production-ready code
+- Feature branches: `<number>-<short-name>` (e.g., `001-docusaurus-setup`)
+- All specs in: `specs/<number>-<short-name>/`
+- All PHRs in: `history/prompts/<constitution|feature-name|general>/`
+
+### Commit Message Format
+Follow Conventional Commits:
+```
+<type>(<scope>): <description> (refs <task-id>)
+
+Types: feat, fix, docs, refactor, test, chore
+Examples:
+  feat(book): add RAG fundamentals chapter (refs T015)
+  feat(api): implement selection grounding (refs T023)
+  docs(adr): document embedding model choice (refs ADR-001)
+```
+
+### PHR (Prompt History Record) Creation
+
+PHRs are **MANDATORY** after completing any user request. They document AI-assisted development sessions.
+
+**When to create**: Implementation work, planning, debugging, spec/task creation, multi-step workflows
+
+**Stages**: `constitution` | `spec` | `plan` | `tasks` | `red` | `green` | `refactor` | `explainer` | `misc` | `general`
+
+**Routing** (automatic):
+- Constitution stage → `history/prompts/constitution/`
+- Feature stages (spec, plan, tasks, etc.) → `history/prompts/<feature-name>/`
+- General stage → `history/prompts/general/`
+
+**Process**: Most slash commands auto-create PHRs. For manual creation, use agent-native tools or fallback to `.specify/scripts/bash/create-phr.sh`.
+
+### ADR (Architecture Decision Record) Suggestions
+
+When you identify architecturally significant decisions during `/sp.plan` or `/sp.tasks`, suggest:
+
+```
+📋 Architectural decision detected: <brief description>
+   Document reasoning and tradeoffs? Run `/sp.adr <decision-title>`
+```
+
+**Criteria for significance** (ALL must be true):
+- **Impact**: Long-term consequences (framework, data model, API, security, platform)
+- **Alternatives**: Multiple viable options considered
+- **Scope**: Cross-cutting, influences system design
+
+Wait for user consent; **never auto-create ADRs**.
+
+---
+
+## Core Agent Behavior
+
+### Task Context
 
 **Your Surface:** You operate on a project level, providing guidance to users and executing development tasks via a defined set of tools.
 
