@@ -1,0 +1,50 @@
+# Node.js / JavaScript / TypeScript
+node_modules/
+dist/
+build/
+*.log
+.env*
+!.env.example
+.cache/
+.docusaurus/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+env/
+ENV/
+dist/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Environment Variables
+.env.local
+.env.production
+
+# Build outputs
+my-website/build/
+api/build/
+
+# Test outputs
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp

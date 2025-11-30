@@ -1,11 +1,130 @@
+/**
+ * HomepageFeatures Styles
+ * Enhanced visual hierarchy for 5-part curriculum display
+ */
+
 .features {
-  display: flex;
-  align-items: center;
-  padding: 2rem 0;
-  width: 100%;
+  padding: 4rem 0;
+  background: var(--ifm-background-surface-color);
 }
 
-.featureSvg {
-  height: 200px;
-  width: 200px;
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionHeader h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.sectionSubtitle {
+  font-size: 1.25rem;
+  color: var(--ifm-color-emphasis-700);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.part {
+  margin-bottom: 2rem;
+  display: flex;
+}
+
+.partCard {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  height: 100%;
+  background: var(--ifm-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.partCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.partIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.partTitle {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.partDescription {
+  flex: 1;
+  color: var(--ifm-color-emphasis-800);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.partMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+/* Responsive Design */
+@media (max-width: 996px) {
+  .sectionHeader h2 {
+    font-size: 2rem;
+  }
+
+  .sectionSubtitle {
+    font-size: 1.1rem;
+  }
+
+  .partCard {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .features {
+    padding: 2rem 0;
+  }
+
+  .sectionHeader {
+    margin-bottom: 2rem;
+  }
+
+  .part {
+    margin-bottom: 1.5rem;
+  }
+
+  .partIcon {
+    font-size: 2.5rem;
+  }
+
+  .partTitle {
+    font-size: 1.25rem;
+  }
+}
+
+/* Dark Mode Support */
+[data-theme='dark'] .partCard {
+  background: var(--ifm-background-surface-color);
+  border-color: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .partCard:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-color: var(--ifm-color-primary);
 }

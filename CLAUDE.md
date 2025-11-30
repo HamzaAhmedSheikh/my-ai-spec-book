@@ -441,3 +441,9 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Active Technologies
+- TypeScript 5.6+ (frontend), Python 3.11+ (backend) (005-ui-ux-rag-phase2)
+
+## Recent Changes
+- 005-ui-ux-rag-phase2: Added TypeScript 5.6+ (frontend), Python 3.11+ (backend)

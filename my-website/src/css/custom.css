@@ -28,3 +28,48 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/**
+ * Enhanced Dark Mode Support
+ * Additional variables for better dark mode experience
+ */
+[data-theme='dark'] {
+  /* Background colors */
+  --ifm-background-color: #1b1b1d;
+  --ifm-background-surface-color: #242526;
+  
+  /* Text colors */
+  --ifm-font-color-base: #e3e3e3;
+  --ifm-heading-color: #ffffff;
+  
+  /* Emphasis colors */
+  --ifm-color-emphasis-100: #2e2e30;
+  --ifm-color-emphasis-200: #3a3a3c;
+  --ifm-color-emphasis-300: #48484a;
+  --ifm-color-emphasis-400: #636366;
+  --ifm-color-emphasis-500: #8e8e93;
+  --ifm-color-emphasis-600: #aeaeb2;
+  --ifm-color-emphasis-700: #c7c7cc;
+  --ifm-color-emphasis-800: #d1d1d6;
+  
+  /* Links */
+  --ifm-link-color: var(--ifm-color-primary-lighter);
+  
+  /* Code blocks */
+  --ifm-code-background: #2d2d2d;
+}
+
+/**
+ * Dark mode specific component styles
+ */
+[data-theme='dark'] {
+  /* Improved contrast for readability */
+  --ifm-heading-font-weight: 600;
+}
+
+/**
+ * Smooth theme transition
+ */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}

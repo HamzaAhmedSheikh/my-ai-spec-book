@@ -1,57 +1,95 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
+import Link from '@docusaurus/Link';
 import styles from './styles.module.css';
 
-type FeatureItem = {
+type PartItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  icon: string;
   description: ReactNode;
+  link: string;
+  chapters: number;
 };
 
-const FeatureList: FeatureItem[] = [
+const BookParts: PartItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Getting Started',
+    icon: '🚀',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Begin your journey into Physical AI. Learn the fundamentals, course structure, 
+        and what makes this field revolutionary for robotics and automation.
       </>
     ),
+    link: '/docs/physical-ai/introduction',
+    chapters: 5,
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Core Technologies',
+    icon: '🛠️',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Master ROS 2, Gazebo simulation, and NVIDIA Isaac platform. Build the technical 
+        foundation for developing intelligent physical systems.
       </>
     ),
+    link: '/docs/physical-ai',
+    chapters: 0, // Placeholder - will be populated as chapters are added
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'AI Integration',
+    icon: '🤖',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Explore vision-language-action models and LLM-based robotics. Learn how AI 
+        transforms robots from programmed machines to adaptive agents.
       </>
     ),
+    link: '/docs/physical-ai',
+    chapters: 0, // Placeholder
+  },
+  {
+    title: 'Hardware & Deployment',
+    icon: '⚙️',
+    description: (
+      <>
+        Understand hardware requirements, student kits, lab setup, and cloud environments. 
+        Bridge the gap from simulation to real-world deployment.
+      </>
+    ),
+    link: '/docs/physical-ai/hardware-requirements',
+    chapters: 4,
+  },
+  {
+    title: 'Assessment & Resources',
+    icon: '📊',
+    description: (
+      <>
+        Evaluate your learning through projects, quizzes, and capstone challenges. 
+        Access supplementary materials and community resources.
+      </>
+    ),
+    link: '/docs/physical-ai/assessments',
+    chapters: 1,
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Part({title, icon, description, link, chapters}: PartItem) {
   return (
-    <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
-      </div>
-      <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
-        <p>{description}</p>
-      </div>
+    <div className={clsx('col col--4', styles.part)}>
+      <Link to={link} className={styles.partCard}>
+        <div className={styles.partIcon}>{icon}</div>
+        <Heading as="h3" className={styles.partTitle}>
+          {title}
+        </Heading>
+        <p className={styles.partDescription}>{description}</p>
+        {chapters > 0 && (
+          <div className={styles.partMeta}>
+            {chapters} {chapters === 1 ? 'chapter' : 'chapters'}
+          </div>
+        )}
+      </Link>
     </div>
   );
 }
@@ -60,9 +98,15 @@ export default function HomepageFeatures(): ReactNode {
   return (
     <section className={styles.features}>
       <div className="container">
+        <div className={styles.sectionHeader}>
+          <Heading as="h2">Explore the Curriculum</Heading>
+          <p className={styles.sectionSubtitle}>
+            Navigate through five thematic parts, from foundational concepts to advanced AI integration
+          </p>
+        </div>
         <div className="row">
-          {FeatureList.map((props, idx) => (
-            <Feature key={idx} {...props} />
+          {BookParts.map((props, idx) => (
+            <Part key={idx} {...props} />
           ))}
         </div>
       </div>

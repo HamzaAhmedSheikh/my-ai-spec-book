@@ -1,0 +1,20 @@
+[project]
+name = "api"
+version = "0.1.0"
+description = "Physical AI Book RAG Chatbot Backend"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.122.0",
+    "httpx>=0.28.1",
+    "pydantic>=2.12.5",
+    "python-dotenv>=1.0.0",
+    "qdrant-client>=1.7.0",
+    "fastembed>=0.2.0",
+    "markdown>=3.5.0",
+    "tiktoken>=0.5.0",
+    "pytest>=9.0.1",
+    "uvicorn>=0.38.0",
+    "openai>=2.8.1",
+    "uuid>=1.30",
+]
