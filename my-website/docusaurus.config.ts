@@ -98,9 +98,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: "My Site",
+      title: "Physical AI & Humanoid Robotics",
       logo: {
-        alt: "My Site Logo",
+        alt: "Physical AI & Humanoid Robotics Logo",
         src: "img/logo.svg",
       },
       items: [
@@ -112,7 +112,7 @@ const config: Config = {
         },
         { to: "/blog", label: "Blog", position: "left" },
         {
-          href: "https://github.com/facebook/docusaurus",
+          href: "https://github.com/HamzaAhmedSheikh/my-ai-spec-book",
           label: "GitHub",
           position: "right",
         },
@@ -126,7 +126,7 @@ const config: Config = {
           items: [
             {
               label: "Tutorial",
-              to: "/docs/physical-ai/introduction",
+              to: "/docs/physical-ai/introduction/introduction-overview",
             },
           ],
         },
@@ -156,12 +156,12 @@ const config: Config = {
             },
             {
               label: "GitHub",
-              href: "https://github.com/facebook/docusaurus",
+              href: "https://github.com/HamzaAhmedSheikh/my-ai-spec-book",
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} HamzaAhmedSheikh. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

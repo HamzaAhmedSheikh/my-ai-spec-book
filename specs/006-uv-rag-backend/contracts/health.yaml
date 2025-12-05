@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: Physical AI RAG Chatbot - Health Check
+  description: Health check endpoint for monitoring backend service and Qdrant connectivity
+  version: 1.0.0
+
+paths:
+  /health:
+    get:
+      summary: Check service health
+      description: Returns service status and Qdrant connection state
+      operationId: checkHealth
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Service is operational
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              examples:
+                healthy:
+                  summary: All systems operational
+                  value:
+                    status: "healthy"
+                    qdrant_connected: true
+                    timestamp: "2025-11-30T10:00:00Z"
+                degraded:
+                  summary: Qdrant unavailable
+                  value:
+                    status: "degraded"
+                    qdrant_connected: false
+                    timestamp: "2025-11-30T10:00:00Z"
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - qdrant_connected
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded]
+          description: Overall service status
+        qdrant_connected:
+          type: boolean
+          description: Whether Qdrant vector database is accessible
+        timestamp:
+          type: string
+          format: date-time
+          description: Response timestamp in ISO 8601 format

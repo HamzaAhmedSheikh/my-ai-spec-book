@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "SlashCommand(/sp.specify Create a backend project using uv for a RAG chatbot that integrates with a Docusaurus book stored in my-website/docs/physical-ai/.\n\nProject Setup:\n- Initialize project: `uv init backend`\n- Structure:\n  my-website/\n      docs/physical-ai/... (multiple folders + .md files)\n      \n  backend/\n      app/main.py\n      app/routes.py\n      app/rag.py\n      app/embeddings.py\n      requirements.txt\n      uv project.yaml\n\nRequirements:\n- Read all markdown files recursively inside docs/physical-ai/.\n- Chunk book content and generate embeddings using fastembed.\n- Store embeddings in Qdrant Cloud Free Tier.\n- Implement RAG flow using FastAPI + OpenAI ChatKit SDK.\n- Chatbot must answer:\n    1) from the whole book\n    2) only from user-selected text\n- Create API endpoints for question answering and indexing.\n\nDeliverables:\n- Working uv backend project.\n- FastAPI RAG pipeline.\n- Qdrant index of all MD files.\n- Chatbot ready for embedding into the Docusaurus website.)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -34,6 +34,7 @@ htmlcov/
 Thumbs.db
 
 # Environment Variables
+.env
 .env.local
 .env.production
 

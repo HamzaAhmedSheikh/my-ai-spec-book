@@ -32,12 +32,13 @@ export default function ChatMessage({ message }: ChatMessageProps): JSX.Element 
             <ul>
               {message.sources.map((source, idx) => (
                 <li key={idx}>
-                  <a href={`/docs/${source.chapter}`} target="_blank" rel="noopener noreferrer">
-                    {source.title}
-                  </a>
+                  Chapter {source.chapter}: {source.section}
+                  {source.page && source.page !== "N/A" && (
+                    <span> (Page {source.page})</span>
+                  )}
                   {source.relevance_score && (
                     <span className={styles.relevanceScore}>
-                      ({Math.round(source.relevance_score * 100)}% relevant)
+                      {" "}({Math.round(source.relevance_score * 100)}% relevant)
                     </span>
                   )}
                 </li>

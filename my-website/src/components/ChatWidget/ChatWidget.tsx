@@ -63,15 +63,10 @@ export default function ChatWidget() {
       let result;
       if (isGroundedMode) {
         // Call grounded endpoint
-        result = await chatGrounded(
-          query,
-          selectedText,
-          sourceChapter || undefined,
-          state.conversationId || undefined,
-        );
+        result = await chatGrounded(query, selectedText);
       } else {
         // Call global endpoint
-        result = await chatGlobal(query, state.conversationId || undefined);
+        result = await chatGlobal(query);
       }
 
       if (!result.success) {
@@ -91,14 +86,13 @@ export default function ChatWidget() {
         sender: "assistant",
         timestamp: new Date(),
         sources: result.data.sources,
-        grounded: result.data.grounded,
+        grounded: isGroundedMode,
       };
 
       setState((prev) => ({
         ...prev,
         messages: [...prev.messages, assistantMessage],
         isLoading: false,
-        conversationId: result.data.conversation_id,
       }));
 
       // Clear selected text after successful grounded query
@@ -146,14 +140,14 @@ export default function ChatWidget() {
           <div className={styles.chatHeader}>
             <div className={styles.chatTitle}>
               <span>📚 Physical AI Assistant</span>
-              {selectedText.length >= 10 && (
+              {/*{selectedText.length >= 10 && (
                 <span
                   className={styles.groundedBadge}
                   title="Grounded in selected text"
                 >
                   🎯 Grounded Mode
                 </span>
-              )}
+              )}*/}
             </div>
             <div className={styles.chatActions}>
               {state.messages.length > 0 && (
@@ -214,6 +208,30 @@ export default function ChatWidget() {
               </div>
             )}
           </div>
+
+          {/* Selected Text Preview (when text is selected) */}
+          {selectedText.length >= 10 && (
+            <div className={styles.selectedTextPreview}>
+              <div className={styles.selectedTextHeader}>
+                <span>🎯 Selected Text:</span>
+                <button
+                  className={styles.clearSelectionButton}
+                  onClick={clearSelection}
+                  title="Clear selection"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className={styles.selectedTextContent}>
+                {selectedText.length > 150
+                  ? `${selectedText.substring(0, 150)}...`
+                  : selectedText}
+              </div>
+              <div className={styles.selectedTextFooter}>
+                {selectedText.length} characters selected
+              </div>
+            </div>
+          )}
 
           {/* Input */}
           <ChatInput

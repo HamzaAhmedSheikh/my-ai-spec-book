@@ -13,20 +13,23 @@
 // ============================================================================
 
 /**
- * Request model for chat endpoint (both global and grounded modes)
+ * Request model for global chat endpoint
  * POST /api/chat
  */
 export interface ChatRequest {
-  /** User's question (min 1 character) */
-  query: string;
-  /** Optional selected text for context mode */
-  selection_context?: string;
-  /** Query mode: 'global' or 'context' */
-  mode: 'global' | 'context';
-  /** Number of chunks to retrieve (default 5, range 1-20) */
-  top_k?: number;
-  /** Optional session identifier for multi-turn conversations */
-  conversation_id?: string;
+  /** User's question (min 1 character, max 1000) */
+  question: string;
+}
+
+/**
+ * Request model for grounded chat endpoint
+ * POST /api/chat/grounded
+ */
+export interface GroundedChatRequest {
+  /** User's question (min 1 character, max 1000) */
+  question: string;
+  /** Selected text for grounded context (min 1, max 10000 characters) */
+  selected_text: string;
 }
 
 // ============================================================================
@@ -34,31 +37,32 @@ export interface ChatRequest {
 // ============================================================================
 
 /**
- * Response model for the /api/chat endpoint
+ * Response model for both /api/chat and /api/chat/grounded endpoints
  */
 export interface ChatResponse {
   /** LLM-generated answer */
   answer: string;
   /** Chapter citations */
-  sources: SourceCitation[];
-  /** Query mode used for the response */
-  mode: 'global' | 'context';
-  /** Session identifier */
-  conversation_id?: string; // Made optional as per backend for consistency, though often present
+  sources: Source[];
+  /** Response latency in seconds */
+  latency?: number;
+  /** Context used for the response (optional) */
+  context?: string;
 }
 
 /**
  * Reference to book chapter where information was retrieved
  */
-export interface SourceCitation {
-  /** Chapter slug (e.g., 'physical-ai/module-1-ros2/chapter-1-introduction') */
-  book: string; // Renamed from 'chapter' to 'book' to match backend
-  /** Relevance score of the source */
-  score: number;
-  /** Index of the chunk within the source */
-  chunk_index: number;
+export interface Source {
+  /** Chapter number */
+  chapter: number;
+  /** Section name */
+  section: string;
+  /** Page reference (optional) */
+  page?: string;
+  /** Relevance score of the source (optional) */
+  relevance_score?: number;
 }
-
 
 /**
  * Health check response
@@ -66,17 +70,10 @@ export interface SourceCitation {
  */
 export interface HealthResponse {
   /** API health status */
-  status: 'healthy' | 'degraded';
+  status: string;
   /** Qdrant connection status */
-  qdrant: string;
-  /** Number of collections in Qdrant */
-  collections: number;
-  /** Embedding model used */
-  embedding_model: string;
-  /** LLM model used */
-  llm_model: string;
+  qdrant_connected: boolean;
 }
-
 
 /**
  * Generic error response
@@ -113,11 +110,11 @@ export interface ChatMessage {
   /** Message text */
   content: string;
   /** Who sent the message */
-  sender: 'user' | 'assistant';
+  sender: "user" | "assistant";
   /** When message was created */
   timestamp: Date;
   /** Chapter citations (assistant messages only) */
-  sources?: SourceCitation[];
+  sources?: Source[];
   /** Whether response was grounded in selected text */
   grounded?: boolean; // Keep for UI logic if needed
 }
@@ -170,10 +167,10 @@ export interface APIConfig {
  * Default API configuration
  */
 export const DEFAULT_API_CONFIG: APIConfig = {
-  baseURL: 'http://localhost:8000', // Default FastAPI server URL
+  baseURL: "http://localhost:8000", // Default FastAPI server URL
   timeout: 30000, // 30 seconds (includes vector search + LLM inference)
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 };
 
@@ -191,12 +188,12 @@ export type APIResult<T> =
 /**
  * Chat mode (global vs grounded)
  */
-export type ChatMode = 'global' | 'context'; // Changed from 'global' | 'grounded' to match backend
+export type ChatMode = "global" | "grounded";
 
 /**
  * Theme mode (light vs dark)
  */
-export type ThemeMode = 'light' | 'dark';
+export type ThemeMode = "light" | "dark";
 
 // ============================================================================
 // Type Guards (Runtime Type Checking)
@@ -207,11 +204,10 @@ export type ThemeMode = 'light' | 'dark';
  */
 export function isChatResponse(obj: unknown): obj is ChatResponse {
   return (
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj !== null &&
-    'answer' in obj &&
-    'mode' in obj &&
-    'sources' in obj
+    "answer" in obj &&
+    "sources" in obj
   );
 }
 
@@ -219,7 +215,7 @@ export function isChatResponse(obj: unknown): obj is ChatResponse {
  * Type guard for ErrorResponse
  */
 export function isErrorResponse(obj: unknown): obj is ErrorResponse {
-  return typeof obj === 'object' && obj !== null && 'detail' in obj;
+  return typeof obj === "object" && obj !== null && "detail" in obj;
 }
 
 /**
@@ -227,10 +223,10 @@ export function isErrorResponse(obj: unknown): obj is ErrorResponse {
  */
 export function isHealthResponse(obj: unknown): obj is HealthResponse {
   return (
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj !== null &&
-    'status' in obj &&
-    'qdrant' in obj
+    "status" in obj &&
+    "qdrant_connected" in obj
   );
 }
 
@@ -242,9 +238,10 @@ export function isHealthResponse(obj: unknown): obj is HealthResponse {
  * API endpoint paths
  */
 export const API_ENDPOINTS = {
-  HEALTH: '/api/health',
-  CHAT: '/api/chat', // Unified chat endpoint
-  INDEX: '/api/index', // For indexing book content (admin endpoint)
+  HEALTH: "/health",
+  CHAT: "/chat",
+  CHAT_GROUNDED: "/chat/grounded",
+  INDEX: "/index",
 } as const;
 
 /**
@@ -264,9 +261,6 @@ export const VALIDATION_RULES = {
  */
 export const DEFAULTS = {
   CONVERSATION_ID: null,
-  THEME: 'light' as ThemeMode,
-  CHAT_MODE: 'global' as ChatMode,
+  THEME: "light" as ThemeMode,
+  CHAT_MODE: "global" as ChatMode,
 } as const;
-
-
- */

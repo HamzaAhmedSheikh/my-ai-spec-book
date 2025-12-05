@@ -283,6 +283,65 @@
 }
 
 /* ============================================================================
+   Selected Text Preview
+   ============================================================================ */
+
+.selectedTextPreview {
+  margin: 0 16px 8px 16px;
+  padding: 12px;
+  background: var(--ifm-color-primary-lightest);
+  border: 2px solid var(--ifm-color-primary-light);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.selectedTextHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--ifm-color-primary-dark);
+}
+
+.clearSelectionButton {
+  background: transparent;
+  border: none;
+  color: var(--ifm-color-emphasis-600);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.clearSelectionButton:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.selectedTextContent {
+  padding: 8px;
+  background: var(--ifm-background-color);
+  border-radius: 4px;
+  line-height: 1.5;
+  color: var(--ifm-font-color-base);
+  font-style: italic;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.selectedTextFooter {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--ifm-color-emphasis-600);
+  text-align: right;
+}
+
+/* ============================================================================
    Input
    ============================================================================ */
 

@@ -2,20 +2,21 @@
  * API Client for Physical AI RAG Chatbot Backend
  *
  * Provides functions to call FastAPI endpoints:
- * - chatGlobal: Full-book search with citations
- * - chatGrounded: Selected text mode (Magna Carta feature)
- * - healthCheck: API health status
+ * - chatGlobal: Full-book search with citations (POST /chat)
+ * - chatGrounded: Selected text mode (POST /chat/grounded)
+ * - healthCheck: API health status (GET /health)
  */
 
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import {
-  ChatRequest, // Updated to unified ChatRequest
+  ChatRequest,
+  GroundedChatRequest,
   ChatResponse,
   HealthResponse,
   APIResult,
-  DEFAULT_API_CONFIG,
-  API_ENDPOINTS, // Import API_ENDPOINTS
+  API_ENDPOINTS,
 } from './types';
+import { DEFAULT_API_CONFIG } from './config';
 
 /**
  * Create axios instance with default configuration
@@ -62,21 +63,17 @@ function handleError(error: unknown): string {
 
 /**
  * Call global context chat endpoint
- * POST /api/chat
+ * POST /chat
  *
- * @param query - User's question about the book
- * @param conversationId - Optional session ID
+ * @param question - User's question about the book
  * @returns API result with ChatResponse or error message
  */
 export async function chatGlobal(
-  query: string,
-  conversationId?: string
+  question: string
 ): Promise<APIResult<ChatResponse>> {
   try {
     const request: ChatRequest = {
-      query,
-      mode: 'global', // Set mode for global chat
-      conversation_id: conversationId,
+      question,
     };
 
     const response = await apiClient.post<ChatResponse>(API_ENDPOINTS.CHAT, request);
@@ -89,28 +86,23 @@ export async function chatGlobal(
 
 /**
  * Call grounded context chat endpoint
- * POST /api/chat
+ * POST /chat/grounded
  *
- * @param query - User's question about the selected text
+ * @param question - User's question about the selected text
  * @param selectedText - Highlighted text from book page
- * @param conversationId - Optional session ID
  * @returns API result with ChatResponse or error message
  */
 export async function chatGrounded(
-  query: string,
-  selectedText: string,
-  // sourceChapter?: string, // Removed as it's not part of backend ChatRequest
-  conversationId?: string
+  question: string,
+  selectedText: string
 ): Promise<APIResult<ChatResponse>> {
   try {
-    const request: ChatRequest = {
-      query,
-      selection_context: selectedText, // Pass selected text as selection_context
-      mode: 'context', // Set mode for grounded chat
-      conversation_id: conversationId,
+    const request: GroundedChatRequest = {
+      question,
+      selected_text: selectedText,
     };
 
-    const response = await apiClient.post<ChatResponse>(API_ENDPOINTS.CHAT, request);
+    const response = await apiClient.post<ChatResponse>(API_ENDPOINTS.CHAT_GROUNDED, request);
 
     return { success: true, data: response.data };
   } catch (error) {
@@ -120,7 +112,7 @@ export async function chatGrounded(
 
 /**
  * Check API health status
- * GET /api/health
+ * GET /health
  *
  * @returns API result with HealthResponse or error message
  */

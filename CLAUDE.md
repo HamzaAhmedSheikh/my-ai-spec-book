@@ -444,6 +444,8 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 
 ## Active Technologies
 - TypeScript 5.6+ (frontend), Python 3.11+ (backend) (005-ui-ux-rag-phase2)
+- Python 3.11+ + FastAPI 0.104+, uvicorn 0.24+, fastembed 0.2+, qdrant-client 1.7+, openai 1.3+, python-frontmatter 1.0+, tiktoken 0.5+, pydantic 2.5+ (006-uv-rag-backend)
+- Qdrant Cloud Free Tier (vector database, 1GB limit), Environment variables (.env file for configuration) (006-uv-rag-backend)
 
 ## Recent Changes
 - 005-ui-ux-rag-phase2: Added TypeScript 5.6+ (frontend), Python 3.11+ (backend)
