@@ -140,14 +140,14 @@ export default function ChatWidget() {
           <div className={styles.chatHeader}>
             <div className={styles.chatTitle}>
               <span>📚 Physical AI Assistant</span>
-              {/*{selectedText.length >= 10 && (
+              {selectedText.length >= 10 && (
                 <span
                   className={styles.groundedBadge}
                   title="Grounded in selected text"
                 >
                   🎯 Grounded Mode
                 </span>
-              )}*/}
+              )}
             </div>
             <div className={styles.chatActions}>
               {state.messages.length > 0 && (
