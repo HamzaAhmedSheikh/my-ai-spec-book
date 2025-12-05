@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: Physical AI RAG Chatbot - Global Chat
+  description: Global question answering endpoint using RAG across entire book corpus
+  version: 1.0.0
+
+paths:
+  /chat:
+    post:
+      summary: Ask a question about the Physical AI book
+      description: |
+        Retrieves relevant chunks from Qdrant vector database and generates
+        an answer using OpenAI LLM with retrieved context.
+      operationId: askQuestion
+      tags:
+        - Chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+            examples:
+              simple_question:
+                summary: Basic question
+                value:
+                  question: "What is Physical AI?"
+              technical_question:
+                summary: Technical question
+                value:
+                  question: "What are the main differences between ROS2 nodes and services?"
+      responses:
+        '200':
+          description: Successful answer generation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+              examples:
+                success:
+                  summary: Successful response with sources
+                  value:
+                    answer: "Physical AI refers to artificial intelligence systems that interact with the physical world through sensors, actuators, and robotic embodiment..."
+                    sources:
+                      - file_path: "intro/01-what-is-physical-ai.md"
+                        chunk_index: 0
+                        similarity_score: 0.92
+                      - file_path: "intro/02-embodied-intelligence.md"
+                        chunk_index: 1
+                        similarity_score: 0.85
+                    context_used:
+                      - "Physical AI is the intersection of artificial intelligence..."
+                      - "Embodied intelligence emphasizes the importance..."
+                    latency: 2.34
+        '400':
+          description: Invalid request (missing/empty question)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                empty_question:
+                  summary: Empty question
+                  value:
+                    error: "question cannot be empty"
+        '500':
+          description: Internal server error (LLM failure, unexpected error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service unavailable (Qdrant disconnected, OpenAI API down)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                qdrant_unavailable:
+                  summary: Qdrant connection failed
+                  value:
+                    error: "Vector database unavailable"
+
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - question
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: User's question about the Physical AI book
+          example: "What is Physical AI?"
+
+    ChatResponse:
+      type: object
+      required:
+        - answer
+        - sources
+        - context_used
+        - latency
+      properties:
+        answer:
+          type: string
+          description: LLM-generated answer
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChunkReference'
+          description: Retrieved chunks used as context
+        context_used:
+          type: array
+          items:
+            type: string
+          description: Text snippets provided to LLM
+        latency:
+          type: number
+          format: float
+          minimum: 0
+          description: Query processing time in seconds
+
+    ChunkReference:
+      type: object
+      required:
+        - file_path
+        - chunk_index
+        - similarity_score
+      properties:
+        file_path:
+          type: string
+          description: Relative path to source markdown file
+          example: "intro/01-what-is-physical-ai.md"
+        chunk_index:
+          type: integer
+          minimum: 0
+          description: Chunk position in document (0-indexed)
+        similarity_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Cosine similarity score (0-1)
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message

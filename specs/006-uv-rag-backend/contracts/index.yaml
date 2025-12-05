@@ -1,0 +1,152 @@
+openapi: 3.0.3
+info:
+  title: Physical AI RAG Chatbot - Indexing
+  description: Content indexing endpoint for processing markdown files and generating embeddings
+  version: 1.0.0
+
+paths:
+  /index:
+    post:
+      summary: Index or re-index book content
+      description: |
+        Discovers all markdown files in docs/physical-ai/, chunks content,
+        generates embeddings, and stores in Qdrant. Replaces existing collection.
+        Runs synchronously (blocks until completion or failure).
+      operationId: indexContent
+      tags:
+        - Indexing
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndexRequest'
+            examples:
+              default:
+                summary: Default indexing (no body)
+                value: {}
+              force_reindex:
+                summary: Force re-index (clear existing collection)
+                value:
+                  force_reindex: true
+      responses:
+        '200':
+          description: Indexing completed successfully (synchronous)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexResponse'
+              examples:
+                success:
+                  summary: Successful indexing
+                  value:
+                    job_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    status: "completed"
+                    files_processed: 105
+                    chunks_created: 5234
+                    started_at: "2025-11-30T10:00:00Z"
+                    completed_at: "2025-11-30T10:04:32Z"
+                    error: null
+        '202':
+          description: Indexing job accepted (asynchronous - future enhancement)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexResponse'
+              examples:
+                accepted:
+                  summary: Job started, running in background
+                  value:
+                    job_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    status: "running"
+                    files_processed: 0
+                    chunks_created: 0
+                    started_at: "2025-11-30T10:00:00Z"
+                    completed_at: null
+                    error: null
+        '409':
+          description: Conflict - Indexing already in progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                already_running:
+                  summary: Indexing job already active
+                  value:
+                    error: "Indexing already in progress"
+        '500':
+          description: Indexing failed (file read error, Qdrant error, embedding generation failure)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexResponse'
+              examples:
+                failed:
+                  summary: Indexing failed
+                  value:
+                    job_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    status: "failed"
+                    files_processed: 23
+                    chunks_created: 1204
+                    started_at: "2025-11-30T10:00:00Z"
+                    completed_at: "2025-11-30T10:01:15Z"
+                    error: "Qdrant connection timeout"
+
+components:
+  schemas:
+    IndexRequest:
+      type: object
+      properties:
+        force_reindex:
+          type: boolean
+          default: false
+          description: If true, force re-indexing even if collection exists
+
+    IndexResponse:
+      type: object
+      required:
+        - job_id
+        - status
+        - files_processed
+        - chunks_created
+        - started_at
+      properties:
+        job_id:
+          type: string
+          format: uuid
+          description: Unique job identifier
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+          description: Current job status
+        files_processed:
+          type: integer
+          minimum: 0
+          description: Number of markdown files processed
+        chunks_created:
+          type: integer
+          minimum: 0
+          description: Number of chunks generated and stored
+        started_at:
+          type: string
+          format: date-time
+          description: Job start timestamp (ISO 8601)
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Job completion timestamp (null if still running)
+        error:
+          type: string
+          nullable: true
+          description: Error message if status is failed
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message

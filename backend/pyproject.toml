@@ -1,0 +1,38 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "UV-based RAG chatbot backend for Physical AI textbook"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "fastembed>=0.2.0",
+    "qdrant-client>=1.7.0",
+    "openai>=1.3.0",
+    "python-frontmatter>=1.0.0",
+    "tiktoken>=0.5.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "sentence-transformers",
+    "limiter>=0.5.0",
+    "slowapi>=0.1.9",
+    "openai-agents>=0.6.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "httpx>=0.25.0",
+    "black>=23.0.0",
+    "pylint>=3.0.0",
+    "mypy>=1.7.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.11.0",
+    "pylint>=4.0.4",
+]

@@ -1,0 +1,122 @@
+openapi: 3.0.3
+info:
+  title: Physical AI RAG Chatbot - Grounded Chat
+  description: Text selection grounding endpoint ("Magna Carta" feature) for context-aware Q&A
+  version: 1.0.0
+
+paths:
+  /chat/grounded:
+    post:
+      summary: Ask a question about user-selected text
+      description: |
+        Generates an answer using only the provided selected_text as context
+        (no vector database retrieval). Enables focused Q&A on specific passages.
+      operationId: askGroundedQuestion
+      tags:
+        - Chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroundedChatRequest'
+            examples:
+              paragraph_selection:
+                summary: Question about highlighted paragraph
+                value:
+                  question: "How does this apply to humanoid robots?"
+                  selected_text: "ROS2 services provide request-response communication patterns. Unlike topics (pub/sub), services are synchronous and return a response. This is useful for triggering actions like 'grasp object' or 'move to position'."
+      responses:
+        '200':
+          description: Successful answer generation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroundedChatResponse'
+              examples:
+                success:
+                  summary: Answer constrained to selected text
+                  value:
+                    answer: "In the context of humanoid robots, ROS2 services can trigger actions like grasping objects (hand control) or moving to specific positions (locomotion). The synchronous nature ensures the robot waits for action completion before proceeding, which is critical for sequential tasks."
+                    sources: []
+                    context_used:
+                      - "ROS2 services provide request-response communication patterns..."
+                    latency: 1.89
+        '400':
+          description: Invalid request (missing question/selected_text, text too long)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missing_selected_text:
+                  summary: Missing selected_text
+                  value:
+                    error: "selected_text is required for grounded mode"
+                text_too_long:
+                  summary: Selected text exceeds limit
+                  value:
+                    error: "selected_text must be ≤10,000 characters"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    GroundedChatRequest:
+      type: object
+      required:
+        - question
+        - selected_text
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: User's question about the selected text
+          example: "How does this apply to humanoid robots?"
+        selected_text:
+          type: string
+          minLength: 1
+          maxLength: 10000
+          description: User-highlighted text snippet (max 10,000 chars)
+          example: "ROS2 services provide request-response communication patterns..."
+
+    GroundedChatResponse:
+      type: object
+      required:
+        - answer
+        - sources
+        - context_used
+        - latency
+      properties:
+        answer:
+          type: string
+          description: LLM-generated answer constrained to selected text
+        sources:
+          type: array
+          items: {}
+          description: Empty array (no Qdrant retrieval for grounded mode)
+          example: []
+        context_used:
+          type: array
+          items:
+            type: string
+          description: Selected text provided as context
+        latency:
+          type: number
+          format: float
+          minimum: 0
+          description: Query processing time in seconds
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
